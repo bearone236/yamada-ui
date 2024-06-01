@@ -17,12 +17,7 @@ import {
   mergeRefs,
   omitChildren,
 } from "@yamada-ui/utils"
-import type {
-  KeyboardEvent,
-  KeyboardEventHandler,
-  MouseEvent,
-  ReactNode,
-} from "react"
+import type { KeyboardEvent, KeyboardEventHandler, ReactNode } from "react"
 import { useCallback } from "react"
 import { useTreeContext, useTreeDescendant } from "./tree"
 import { TreeButton } from "./tree-button"
@@ -33,6 +28,7 @@ type TreeItemContext = Omit<TreeItemOptions, "children"> & {
   getButtonProps: UIPropGetter<"button">
   getContentProps: UIPropGetter<"ul">
   getPanelProps: UIPropGetter
+  onChange: (isOpen: boolean) => void
 }
 
 const [TreeItemProvider, useTreeItemContext] = createContext<TreeItemContext>({
@@ -141,38 +137,32 @@ export const TreeItem = forwardRef<TreeItemProps, "li">(
       setFocusedIndex(i)
     }, [setFocusedIndex, i])
 
-    const onClick = useCallback(
-      (ev: MouseEvent) => {
-        if (
-          (ev.target as HTMLElement).classList.contains("ui-tree__icon") ||
-          !isSelectable
-        ) {
-          onChange(!isOpen)
+    const onClick = useCallback(() => {
+      if (!isSelectable) {
+        onChange(!isOpen)
+      } else {
+        if (selectMultiple) {
+          setSelectedIndex((prev) =>
+            isArray(prev)
+              ? prev.includes(i)
+                ? prev.filter((item) => item !== i)
+                : prev.concat(i)
+              : [i],
+          )
         } else {
-          if (selectMultiple) {
-            setSelectedIndex((prev) =>
-              isArray(prev)
-                ? prev.includes(i)
-                  ? prev.filter((item) => item !== i)
-                  : prev.concat(i)
-                : [i],
-            )
-          } else {
-            setSelectedIndex(i)
-          }
+          setSelectedIndex(i)
         }
-        setFocusedIndex(i)
-      },
-      [
-        isSelectable,
-        setFocusedIndex,
-        i,
-        onChange,
-        isOpen,
-        selectMultiple,
-        setSelectedIndex,
-      ],
-    )
+      }
+      setFocusedIndex(i)
+    }, [
+      isSelectable,
+      setFocusedIndex,
+      i,
+      onChange,
+      isOpen,
+      selectMultiple,
+      setSelectedIndex,
+    ])
 
     const onKeyDown = useCallback(
       (ev: KeyboardEvent) => {
@@ -276,6 +266,7 @@ export const TreeItem = forwardRef<TreeItemProps, "li">(
           getPanelProps,
           selectedBg,
           selectedBackground,
+          onChange,
         }}
       >
         <ui.li

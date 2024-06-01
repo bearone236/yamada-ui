@@ -1,10 +1,10 @@
 import type { CSSUIObject, HTMLUIProps } from "@yamada-ui/core"
 import { ui, forwardRef } from "@yamada-ui/core"
 import type { IconProps } from "@yamada-ui/icon"
-import { ChevronIcon } from "@yamada-ui/icon"
 import { cx, isArray } from "@yamada-ui/utils"
 import type { FC, PropsWithChildren, ReactNode } from "react"
 import { useTreeContext } from "./tree"
+import { TreeIcon } from "./tree-icon"
 import { useTreeItemContext } from "./tree-item"
 
 type TreeButtonOptions = {
@@ -124,18 +124,10 @@ type IconType =
   | ((props: { isExpanded: boolean; isDisabled: boolean }) => ReactNode)
 
 export const getIcon = (
-  [customIcon, supplementIcon, generalIcon]: IconType[],
+  [supplementIcon, customIcon, generalIcon]: IconType[],
   isOpen: boolean,
   isDisabled: boolean,
 ): ReactNode => {
-  const cloneCustomIcon =
-    typeof customIcon === "function"
-      ? customIcon({
-          isExpanded: isOpen,
-          isDisabled,
-        })
-      : customIcon
-
   const cloneSupplementIcon =
     typeof supplementIcon === "function"
       ? supplementIcon({
@@ -143,6 +135,14 @@ export const getIcon = (
           isDisabled,
         })
       : supplementIcon
+
+  const cloneCustomIcon =
+    typeof customIcon === "function"
+      ? customIcon({
+          isExpanded: isOpen,
+          isDisabled,
+        })
+      : customIcon
 
   const cloneGeneralIcon =
     typeof generalIcon === "function"
@@ -152,53 +152,7 @@ export const getIcon = (
         })
       : generalIcon
 
-  return cloneCustomIcon ?? cloneSupplementIcon ?? cloneGeneralIcon
-}
-
-type TreeIconOptions = PropsWithChildren<IconProps> & {
-  hidden?: boolean
-}
-
-export const TreeIcon: FC<TreeIconOptions> = ({
-  className,
-  children,
-  hidden,
-  ...rest
-}) => {
-  const { isOpen, isDisabled } = useTreeItemContext()
-  const { styles } = useTreeContext()
-
-  const css: CSSUIObject = {
-    opacity: isDisabled ? 0.4 : 1,
-    transform: isOpen ? "rotate(-180deg)" : undefined,
-    transition: "transform 0.2s",
-    transformOrigin: "center",
-    visibility: hidden ? "hidden" : undefined,
-    ...styles.icon,
-  }
-
-  if (children)
-    return (
-      <ui.span
-        className={cx("ui-tree__icon", className)}
-        __css={{
-          display: "inline-flex",
-          justifyContent: "center",
-          alignItems: "center",
-          visibility: hidden ? "hidden" : undefined,
-        }}
-      >
-        {children}
-      </ui.span>
-    )
-
-  return (
-    <ChevronIcon
-      className={cx("ui-tree__icon", className)}
-      __css={css}
-      {...rest}
-    />
-  )
+  return cloneSupplementIcon ?? cloneCustomIcon ?? cloneGeneralIcon
 }
 
 type TreeLeftIconOptions = PropsWithChildren<IconProps> & {}
