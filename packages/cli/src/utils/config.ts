@@ -30,9 +30,7 @@ export const getConfig = async (
 }
 
 export type Config = {
-  options: {
-    dirPath: string
-  }
+  options: {}
   theme: {
     module: string
     outputPath: string
@@ -44,12 +42,11 @@ export type Config = {
     outputPath?: string
   }
   components?: string[]
+  hooks?: string[]
 }
 
 export type UsageConfig = {
-  options?: {
-    dirPath?: string
-  }
+  options?: {}
   theme?: {
     module?: string
     outputPath?: string
@@ -61,12 +58,11 @@ export type UsageConfig = {
     outputPath?: string
   }
   components?: string[]
+  hooks?: string[]
 }
 
 const DEFAULT_CONFIG: UsageConfig = {
-  options: {
-    dirPath: ".ui",
-  },
+  options: {},
   theme: {
     module: "default",
     outputPath: "./theme",
