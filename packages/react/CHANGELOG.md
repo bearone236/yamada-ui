@@ -1,5 +1,12 @@
 # @yamada-ui/react
 
+## 1.4.8
+
+### Patch Changes
+
+- Updated dependencies [[`d616b31`](https://github.com/yamada-ui/yamada-ui/commit/d616b31ca31527a35752bce06e36ead5603d0e3c)]:
+  - @yamada-ui/select@1.3.3
+
 ## 1.4.7
 
 ### Patch Changes
